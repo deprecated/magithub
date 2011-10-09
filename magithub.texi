@@ -11,7 +11,7 @@
 @end direntry
 
 @copying
-Copyright @copyright{} 2010 Nathan Weizenbaum
+Copyright @copyright{} 2010 Nathan Weizenbaum, 2011 Hilary Holz
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -30,10 +30,12 @@ built on top of the Magit interface to Git.
 
 @menu
 * Introduction::
-* New Repositories::
-* Existing Repositories::
-* GitHub Network::
-* GitHub Website::
+* Creating Repositories::
+* Cloning and Forking::
+* Tracking Forks::
+* Creating Gists::
+* Browsing GitHub with Magithub::
+* Magithub minor mode::
 @end menu
 
 @node Introduction
@@ -57,10 +59,8 @@ to avoid conflicting with built-in Magit commands.
 Just as in Magit, these commands will be available in all @code{magit-mode} buffers,
 but may not necessarily make sense in all contexts.
 
-@node New Repositories
-@chapter New Repositories
-
-@section GitHub Repositories
+@node Creating Repositories
+@chapter Creating Repositories
 
 To push the current Git repository to a new GitHub repository, type @kbd{' C}.
 This will prompt for various bits of information (name, description, homepage),
@@ -71,23 +71,8 @@ Magithub will make it the default remote repository.
 By default, the new GitHub repository is public.
 With a prefix arg, it will be private instead.
 
-@section Gists
-
-You can also push the current Git repository
-as a @url{http://gist.github.com, Gist} by typing @kbd{' g},
-since Gists are just Git repositories.
-
-When a Gist is created, the URL is copied to the kill ring
-and opened in the browser.
-You can disable the latter by setting @code{magithub-view-gist} to @code{nil}.
-
-Magithub does not support pasting snippets of files to Gist.
-For that, @url{http://github.com/defunkt/gist.el, gist.el} is more appropriate.
-
-@node Existing Repositories
-@chapter Existing Repositories
-
-@section Cloning
+@node Cloning and Forking
+@chapter Cloning and Forking
 
 You can clone a GitHub repository by typing @kbd{' c}.
 This will prompt for the repository to clone (of the form @code{USERNAME/REPONAME})
@@ -104,15 +89,11 @@ but if you make a lot of clones you might want to bind it.
 
 You can toggle between the private URL and the public URL using @kbd{' S}.
 
-@section Forking
-
 Once you've checked out a GitHub repository, you can fork it by typing @kbd{' f}.
 This will create a fork on GitHub and set that fork up as the default remote repository.
 
-@node GitHub Network
-@chapter GitHub Network
-
-@section Tracking
+@node Tracking Forks
+@chapter Tracking Forks
 
 You can track a user's fork of your repository by typing @kbd{' t}
 and providing the user's name, and the name of the repository
@@ -120,16 +101,28 @@ if it is different from your repository's name.
 This adds a remote named after the user, tracking their fork.
 With a prefix argument, it fetches the remote as well.
 
-@node GitHub Website
-@chapter GitHub Website
+@node Creating Gists
+@chapter Creating Gists
+
+You can also push the current Git repository
+as a @url{http://gist.github.com, Gist} by typing @kbd{' g},
+since Gists are just Git repositories.
+
+When a Gist is created, the URL is copied to the kill ring
+and opened in the browser.
+You can disable the latter by setting @code{magithub-view-gist} to @code{nil}.
+
+Magithub does not support pasting snippets of files to Gist.
+For that, @url{http://github.com/defunkt/gist.el, gist.el} is more appropriate.
+
+@node Browsing GitHub with Magithub
+@chapter Browsing GitHub with Magithub
 
 Most Magit and Magithub buffers have direct parallels on the GitHub website.
 Magithub makes these all available by typing @kbd{' b}
-(or @kbd{C-c ' b} in non-Magit buffers; @pxref{Other Browsable Buffers}).
+(or @kbd{C-c ' b} in non-Magit buffers; @pxref{Magithub minor mode}).
 This opens the relevant GitHub page in your browser using @code{browse-url}
 and copies the URL to the kill ring.
-
-@section Browsable Magit Buffers
 
 Typing @kbd{' b} when the point is on a commit
 in a log or status buffer will show that commit on GitHub.
@@ -145,8 +138,8 @@ Typing @kbd{' b} in a diff buffer will show the corresponding compare page on Gi
 Like commits, if the point is on a particular section of the diff,
 the browser will open to that section.
 
-@node Other Browsable Buffers
-@section Other Browsable Buffers
+@node Magithub minor mode
+@chapter Magithub minor mode
 
 Magithub includes a minor mode that allows it to provide commands
 in buffers for files that are checked in to git.
