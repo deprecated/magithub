@@ -1,26 +1,53 @@
-# no user serviceable parts.
-# to change the prefix or the destination directory, just specify on command line, as 
-# sudo make prefix=/opt/local install
-#
-version=0.2
-package=magithub
+##################################
+# adjust as needed to your system
+##################################
 
+# your emacs binary
+EMACS = emacs
+
+# where local software is installed
 prefix         = /usr/local
 datarootdir    = $(prefix)/share
+
+# where local lisp files go
 lispdir        = $(datarootdir)/emacs/site-lisp
+
+# where info files go
 infodir        = $(datarootdir)/info
 
-emacs=emacs
-makeinfo=makeinfo
+##################################
+# you MAY need to edit these
+##################################
+
+BATCH = $(EMACS) -batch -q -no-site-file -eval \
+  "(setq load-path (cons (expand-file-name \".\") load-path))"
+
+magithub.elc: magithub.el
+	$(BATCH) --eval '(byte-compile-file "magithub.el")'
+
+MKDIR = mkdir -p
+
+CP = cp -p
+
+MAKEINFO = makeinfo
+
+INSTALL_INFO = install-info
+
+##################################
+# touch at your own peril!!
+##################################
+
+version=0.2
+package=magithub
 
 # targets to build info file
 info: magithub.info
 
 localinfodir=$${PWD}/info
 magithub.info: FORCEINFO magithub.texi
-	mkdir $(localinfodir)
-	$(makeinfo) -o $(localinfodir)/magithub.info magithub.texi
-	install-info --info-dir=$(localinfodir) $(localinfodir)/magithub.info
+	$(MKDIR) $(localinfodir)
+	$(MAKEINFO) -o $(localinfodir)/magithub.info magithub.texi
+	$(INSTALL_INFO) --info-dir=$(localinfodir) $(localinfodir)/magithub.info
 
 FORCEINFO:
 	-rm -rf $(localinfodir) >/dev/null 2>&1
@@ -38,9 +65,9 @@ $(distdir).tar.gz: $(distdir)
 	rm -rf $(distdir)
 
 $(distdir): FORCE
-	mkdir -p $(distdir)/info
-	cp $(distfiles) $(distdir)
-	cp $(infofiles) $(distdir)/info
+	$(MKDIR) $(distdir)/info
+	$(CP) $(distfiles) $(distdir)
+	$(CP) $(infofiles) $(distdir)/info
 
 FORCE:
 	-rm $(distdir).tar.gz >/dev/null 2>&1
@@ -50,23 +77,21 @@ FORCE:
 elcs=$(els:.el=.elc)
 all: $(elcs)
 
-batch=$(emacs) -batch -q -no-site-file -eval \
-  "(setq load-path (cons (expand-file-name \".\") load-path))"
-
-%.elc: %.el
-	$(batch) --eval '(byte-compile-file "$<")'
-
 # this will get actual tests in the future :)
 check: all info
 
 # targets for installing - does not depend on build targets so that sudo make install
 # will not run make!
-install:
+install-lisp:
 	install -d $(DESTDIR)$(lispdir)
 	install -m 644 $(els) $(elcs) $(DESTDIR)$(lispdir)
+
+install-info:
 	install -d $(DESTDIR)$(infodir)
 	install -m 644 magithub.info $(DESTDIR)$(infodir)
 	install-info --info-dir=$(DESTDIR)$(infodir) $(DESTDIR)$(infodir)/magit.info
+
+install: install-lisp install-info
 
 # targets for uninstalling
 uninstall: 
@@ -96,4 +121,4 @@ distcheck: $(distdir).tar.gz
 maintainer-clean: FORCE FORCEINFO
 	rm $(elcs)
 
-.PHONY: FORCEINFO info dist FORCE all check install uninstall clean distcheck maintainer-check
+.PHONY: FORCEINFO info dist FORCE all check install-lisp install-info install uninstall clean distcheck maintainer-check
