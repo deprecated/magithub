@@ -14,27 +14,29 @@ emacs=emacs
 makeinfo=makeinfo
 
 # targets to build info file
-magithub.info: magithub.texi $(localinfodir)
+info: magithub.info
+
+localinfodir=$${PWD}/info
+magithub.info: FORCEINFO magithub.texi
+	mkdir $(localinfodir)
 	$(makeinfo) -o $(localinfodir)/magithub.info magithub.texi
 	install-info --info-dir=$(localinfodir) $(localinfodir)/magithub.info
 
-localinfodir=$${PWD}/info
-$(localinfodir):
-	mkdir $@
-
-info: magithub.info
+FORCEINFO:
+	-rm -rf $(localinfodir) >/dev/null 2>&1
 
 # targets to build distribution archive
 els=magithub.el
 distfiles=$(els) Makefile magithub-pkg.el README magithub.texi
-infofiles=magithub.info dir
-dist: $(distfiles) $(infofiles) $(distdir).tar.gz
+infofiles=$(localinfodir)/magithub.info $(localinfodir)/dir
+distdir=$(package)-$(version)
+
+dist: $(distfiles) info $(distdir).tar.gz
 
 $(distdir).tar.gz: $(distdir)
 	tar chof - $(distdir) | gzip -9 -c > $@
 	rm -rf $(distdir)
 
-distdir=$(package)-$(version)
 $(distdir): FORCE
 	mkdir -p $(distdir)/info
 	cp $(distfiles) $(distdir)
@@ -91,7 +93,7 @@ distcheck: $(distdir).tar.gz
 	rm -rf $(distdir)
 	@echo "*** Package $(distdir).tar.gz is ready for distribution."
 
-maintainer-clean: FORCE
-	rm magithub.info $(elcs)
+maintainer-clean: FORCE FORCEINFO
+	rm $(elcs)
 
-.PHONY: info dist FORCE all check install uninstall clean distcheck maintainer-check
+.PHONY: FORCEINFO info dist FORCE all check install uninstall clean distcheck maintainer-check
