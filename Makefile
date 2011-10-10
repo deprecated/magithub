@@ -43,7 +43,9 @@ package=magithub
 # targets to build info file
 info: magithub.info
 
-localinfodir=$${PWD}/info
+# without the quotes, breaks on macs - spaces in directory name
+localinfodir="$${PWD}"/info
+
 magithub.info: FORCEINFO magithub.texi
 	$(MKDIR) $(localinfodir)
 	$(MAKEINFO) -o $(localinfodir)/magithub.info magithub.texi
@@ -64,21 +66,23 @@ $(distdir).tar.gz: $(distdir)
 	tar chof - $(distdir) | gzip -9 -c > $@
 	rm -rf $(distdir)
 
-$(distdir): FORCE
+$(distdir): FORCEDIST
 	$(MKDIR) $(distdir)/info
 	$(CP) $(distfiles) $(distdir)
-	$(CP) $(infofiles) $(distdir)/info
+	$(CP) $(localinfodir)/magithub.info $(localinfodir)/dir $(distdir)/info
 
-FORCE:
+FORCEDIST:
 	-rm $(distdir).tar.gz >/dev/null 2>&1
 	-rm -rf $(distdir) >/dev/null 2>&1
 
 # targets to compile elisp file(s)
 elcs=$(els:.el=.elc)
-all: $(elcs)
+compile: $(elcs)
+
+all: compile info
 
 # this will get actual tests in the future :)
-check: all info
+check: all
 
 # targets for installing - does not depend on build targets so that sudo make install
 # will not run make!
@@ -98,11 +102,7 @@ uninstall:
 	-rm $(DESTDIR)$(lispdir)/$(els) $(DESTDIR)$(lispdir)/$(elcs)
 	-rm $(DESTDIR)$(infodir)/magit.info
 
-# end-user clean
-clean:
-	rm $(elcs)
-
-# targets to build info file
+# check dist target
 distcheck: $(distdir).tar.gz
 	gzip -cd $(distdir).tar.gz | tar xvf -
 	cd $(distdir) && $(MAKE) all
@@ -114,11 +114,27 @@ distcheck: $(distdir).tar.gz
 		echo "*** $${remaining} file(s) remaining in stage directory!"; \
 		exit 1; \
 	fi
-	cd $(distdir) && $(MAKE) clean
 	rm -rf $(distdir)
 	@echo "*** Package $(distdir).tar.gz is ready for distribution."
 
-maintainer-clean: FORCE FORCEINFO
+# end-user clean
+clean: FORCEINFO
 	rm $(elcs)
 
-.PHONY: FORCEINFO info dist FORCE all check install-lisp install-info install uninstall clean distcheck maintainer-check
+maintainer-clean: FORCEDIST FORCEINFO
+	rm $(elcs)
+
+.PHONY: FORCEINFO info dist FORCEDIST compile all check install-lisp install-info install uninstall clean distcheck maintainer-clean help
+
+help:
+	@echo "Usage: make all - compile Magithub ELisp and Info files"
+	@echo "       make compile - compile Magithub ELisp files"
+	@echo "       make info - compile Magithub Info files"
+	@echo ""
+	@echo "       make install - install Magithub ELisp and Info files"
+	@echo "       make install-lisp - install Magithub ELisp files"
+	@echo "       make install-info - install Magithub Info files"
+	@echo ""
+	@echo "       make uninstall - remove Magithub ELisp and Info files"
+	@echo ""
+	@echo "       make clean - restart make process"
