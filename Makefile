@@ -20,7 +20,7 @@ infodir        = $(datarootdir)/info
 ##################################
 
 BATCH = $(EMACS) -batch -q -no-site-file -eval \
-  "(setq load-path (cons (expand-file-name \".\") load-path))"
+  "(setq load-path (cons (expand-file-name \".\") (cons \"$(lispdir)\" load-path)))"
 
 magithub.elc: magithub.el
 	$(BATCH) --eval '(byte-compile-file "magithub.el")'
@@ -56,7 +56,7 @@ FORCEINFO:
 
 # targets to build distribution archive
 els=magithub.el
-distfiles=$(els) Makefile magithub-pkg.el README magithub.texi
+distfiles=$(els) Makefile magithub-autoloads.el magithub-pkg.el README magithub.texi
 infofiles=$(localinfodir)/magithub.info $(localinfodir)/dir
 distdir=$(package)-$(version)
 
@@ -119,10 +119,10 @@ distcheck: $(distdir).tar.gz
 
 # end-user clean
 clean: FORCEINFO
-	rm $(elcs)
+	-rm $(elcs)
 
 maintainer-clean: FORCEDIST FORCEINFO
-	rm $(elcs)
+	-rm $(elcs)
 
 .PHONY: FORCEINFO info dist FORCEDIST compile all check install-lisp install-info install uninstall clean distcheck maintainer-clean help
 
