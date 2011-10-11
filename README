@@ -1,5 +1,9 @@
 Magithub extends Magit to interact with Github. The project had some solid early work done on it. Current focus is getting a full project infrastructure in place for working on it.
 
-Better interaction with GitHub issues might benefit from the work done on Org-X[1], which has now matured and been merged with the main Org branch.
+Better interaction with GitHub issues might benefit from the work done on Org-X[1], which has now matured and been merged with the main Org branch[2].
+
+See also org-magit[3] for possible inspiration.
 
 [1] http://thread.gmane.org/gmane.emacs.orgmode/45570
+[2] https://github.com/jwiegley/org-mode
+[3] https://github.com/sigma/org-magit
