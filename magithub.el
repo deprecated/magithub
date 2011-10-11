@@ -1,12 +1,15 @@
 ;;; magithub.el --- Magit extensions for using GitHub
 
 ;; Copyright (c) 2010 Nathan Weizenbaum
+;; Copyright (c) 2011 Štěpán Němec <stepnem@gmail.com>
+;; Copyright (c) 2011 Hilary Holz <hilary@hholz.com>
 ;; Licensed under the same terms as Emacs.
 
 ;; Author: Nathan Weizenbaum
 ;;         Štěpán Němec <stepnem@gmail.com>
+;;         Hilary Holz <hilary@hholz.com>
 ;; URL: http://github.com/nex3/magithub
-;; Version: 0.1
+;; Version: 0.2
 ;; Created: 2010-06-06
 ;; By: Nathan Weizenbaum
 ;; Keywords: git, github, magit
@@ -24,7 +27,6 @@
 (require 'url)
 (require 'json)
 (eval-when-compile (require 'cl))
-
 
 ;;; Variables
 
@@ -1202,6 +1204,9 @@ See `magithub-try-enabling-minor-mode'."
 
 (add-hook 'find-file-hook 'magithub-try-enabling-minor-mode)
 
-
 (provide 'magithub)
 ;;; magithub.el ends here
+
+;; Local Variables:
+;; generated-autoload-file: "magithub-autoloads.el"
+;; End:
