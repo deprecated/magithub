@@ -92,7 +92,7 @@ install-lisp:
 
 install-info:
 	install -d $(DESTDIR)$(infodir)
-	install -m 644 magithub.info $(DESTDIR)$(infodir)
+	install -m 644 $(localinfodir)/magithub.info $(DESTDIR)$(infodir)
 	install-info --info-dir=$(DESTDIR)$(infodir) $(DESTDIR)$(infodir)/magit.info
 
 install: install-lisp install-info
